@@ -1,0 +1,121 @@
+.rowWrap {
+  margin: 6px 0px;
+  color: white;
+  width: 100%;
+}
+
+.rowWrap:first-child {
+  margin: 0px;
+}
+
+.row {
+  display: flex;
+  font-size: 1.5rem;
+  justify-content: space-between;
+  padding: 6px 24px;
+}
+
+.subRow {
+  display: flex;
+  font-size: 1.125rem;
+  justify-content: space-between;
+  padding: 6px 24px;
+  background: #5d686f;
+}
+
+.greenBg {
+  background: #bcd646;
+}
+
+.blueBg {
+  background: #00b9f1;
+}
+
+.purpleBg {
+  background: #8f3e97;
+}
+
+.orangeBg {
+  background: #faa633;
+}
+
+.redBg {
+  background: #ee2c3b;
+}
+
+.paleGreenBg {
+  background: #eff5d8;
+}
+
+.paleBlueBg {
+  background: #c6eafa;
+}
+
+.palePurpleBg {
+  background: #e7dbeb;
+}
+
+.paleOrangeBg {
+  background: #feecd7;
+}
+
+.paleRedBg {
+  background: #fdded4;
+}
+
+.paleBg {
+  background: white;
+}
+
+.leftSection {
+  display: flex;
+  flex-basis: 75%;
+}
+
+.indexSection {
+  flex-basis: 5%;
+  text-align: left;
+}
+
+.toggleBlock {
+  display: flex;
+  cursor: pointer;
+}
+
+.toggleText {
+  border-bottom: 1px dashed;
+}
+
+.jumpBlock {
+  padding: 6px 24px;
+  color: black;
+  font-size: 1.125rem;
+  background: rgba(255, 255, 255, 0.9);
+  font-weight: normal;
+  display: flex;
+}
+
+.cell {
+  color: white;
+  font-size: 1.15rem;
+}
+
+@media screen and (max-width:736px) {
+  .row {
+    padding: 6px 12px;
+    font-size: 1.2rem;
+  }
+
+  .subRow {
+    padding: 6px 12px;
+    font-size: 1rem;
+  }
+
+  .leftSection {
+    flex-basis: 100%;
+  }
+
+  .cell {
+    font-size: 0.85rem;
+  }
+}
