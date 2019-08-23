@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/static/css/main.559714fb.chunk.css",
-    "main.js": "/static/js/main.f90737eb.chunk.js",
-    "main.js.map": "/static/js/main.f90737eb.chunk.js.map",
-    "runtime~main.js": "/static/js/runtime~main.198e6ff0.js",
-    "runtime~main.js.map": "/static/js/runtime~main.198e6ff0.js.map",
-    "static/js/2.2e1a35da.chunk.js": "/static/js/2.2e1a35da.chunk.js",
-    "static/js/2.2e1a35da.chunk.js.map": "/static/js/2.2e1a35da.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.e3148a26d8038a32a4a40a2c1608aad4.js": "/precache-manifest.e3148a26d8038a32a4a40a2c1608aad4.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/main.559714fb.chunk.css.map": "/static/css/main.559714fb.chunk.css.map",
-    "static/media/styles.module.css": "/static/media/background.bab218c5.jpg"
+    "main.css": "/acrobatics/static/css/main.5d55456f.chunk.css",
+    "main.js": "/acrobatics/static/js/main.d11cfe2c.chunk.js",
+    "main.js.map": "/acrobatics/static/js/main.d11cfe2c.chunk.js.map",
+    "runtime~main.js": "/acrobatics/static/js/runtime~main.0cea684a.js",
+    "runtime~main.js.map": "/acrobatics/static/js/runtime~main.0cea684a.js.map",
+    "static/js/2.2e1a35da.chunk.js": "/acrobatics/static/js/2.2e1a35da.chunk.js",
+    "static/js/2.2e1a35da.chunk.js.map": "/acrobatics/static/js/2.2e1a35da.chunk.js.map",
+    "index.html": "/acrobatics/index.html",
+    "precache-manifest.33290a3f9733b641bea9ea4e7f916fcb.js": "/acrobatics/precache-manifest.33290a3f9733b641bea9ea4e7f916fcb.js",
+    "service-worker.js": "/acrobatics/service-worker.js",
+    "static/css/main.5d55456f.chunk.css.map": "/acrobatics/static/css/main.5d55456f.chunk.css.map",
+    "static/media/styles.module.css": "/acrobatics/static/media/background.bab218c5.jpg"
   }
 }
