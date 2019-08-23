@@ -1,0 +1,60 @@
+.table {
+  width: 100%;
+}
+
+.rowWrap {
+  margin: 5px 10px;
+  color: white;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  font-size: 24px;
+  justify-content: space-between;
+  padding: 5px 20px;
+}
+
+.subRow {
+  display: flex;
+  font-size: 18px;
+  justify-content: space-between;
+  padding: 5px 20px;
+  background: #5d686f;
+}
+
+.greenBg {
+  background: #bcd646;
+}
+
+.blueBg {
+  background: #00b9f1;
+}
+
+.purpleBg {
+  background: #8f3e97;
+}
+
+.orangeBg {
+  background: #faa633;
+}
+
+.redBg {
+  background: #ee2c3b;
+}
+
+.leftSection {
+  display: flex;
+  flex-basis: 75%;
+}
+
+.indexSection {
+  flex-basis: 5%;
+  text-align: left;
+}
+
+/* #bcd646 */
+/* #00b9f1 */
+/* #8f3e97 */
+/* #faa633 */
+/* #ee2c3b */

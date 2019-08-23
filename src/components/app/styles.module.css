@@ -1,0 +1,18 @@
+.app {
+  background: url('../../assets/background.jpg');
+  text-align: center;
+}
+
+.appWrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: #f26000;
+  font-size: 36px;
+  font-weight: bold;
+  max-width: 1280px;
+  margin: auto;
+}
