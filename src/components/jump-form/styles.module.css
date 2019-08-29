@@ -1,0 +1,25 @@
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px 24px;
+  justify-content: space-between;
+}
+
+.longControl {
+  flex-basis: 60%;
+  margin: 4px;
+}
+
+.shortControl {
+  flex-basis: 30%;
+  margin: 4px;
+}
+
+.divider {
+  flex-basis: 100%;
+  margin: 8px 0px;
+}
+
+.submit{
+  margin: 24px;
+}

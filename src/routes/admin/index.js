@@ -9,9 +9,10 @@ import Tab from '@material-ui/core/Tab'
 // import { Redirect } from 'react-router-dom'
 
 
-import ComboRow from '../../components/combo-row'
+// import ComboRow from '../../components/combo-row'
+import JumpForm from '../../components/jump-form'
 
-import { combos, jumps } from '../../data/programm'
+import { combos } from '../../data/programm'
 
 import classes from './styles.module.css'
 
@@ -48,9 +49,7 @@ export default function ComboTable () {
 
       <Paper className={ classes.paper }>
         {
-          value === 0 && jumps.map((jump) => (
-            <Typography> {jump.shortName} </Typography>
-          ))
+          value === 0 && <JumpForm />
         }
         {
           value === 1 && combos.map((combo) => (
