@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ComboRow from '../combo-row'
+import ComboRow from '../../components/combo-row'
 
 import { combos } from '../../data/programm'
 
