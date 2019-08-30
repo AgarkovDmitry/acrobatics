@@ -22,10 +22,11 @@ const positions = [
 ]
 
 const flightPositions = [
-  { id: 0, shortName: 'г', name: 'Группировка' },
-  { id: 1, shortName: 'с', name: 'Складка' },
-  { id: 2, shortName: 'св', name: 'Розножка' },
-  { id: 3, shortName: 'п', name: 'Прогиб' }
+  { id: 0, shortName: ' ', name: 'Произвольно' },
+  { id: 1, shortName: 'г', name: 'Группировка' },
+  { id: 2, shortName: 'с', name: 'Складка' },
+  { id: 3, shortName: 'св', name: 'Розножка' },
+  { id: 4, shortName: 'п', name: 'Прогиб' }
 ]
 
 const directions = [
@@ -36,16 +37,20 @@ const directions = [
 
 const mod = (n, m) => ((n % m) + m) % m
 
-const generateCode = ({ flipDirection, startPosition, flipQuarters, twistHalves, finishPosition }) => '' + 
+const generateCode = ({ flipDirection, startPosition, flipQuarters, twistHalves, finishPosition, flightPosition }) => '' + 
   flipDirection + 
   startPosition + 
   (flipDirection === 1 ? 0 : flipQuarters) + 
   (twistHalves !== 0 ? twistHalves : '') +
-  (finishPosition !== 1 && finishPosition !== 3 ? `-${finishPosition}` : '')
+  (finishPosition !== 1 && finishPosition !== 3 ? `-${finishPosition}` : '') + 
+  (flightPosition !== 0 && ` ${flightPositions.find(i => i.id === flightPosition).shortName}`)
 
-const calculateDifficulty = ({ flipQuarters, twistHalves }) => {
-  //TODO добавить положение в полете Группировка, Складка(0.1), Розножка(0.1), Прогиб
-  return Math.floor(1.25 * Number(flipQuarters) + Number(twistHalves)) / 10
+const calculateDifficulty = ({ flipQuarters, twistHalves, flightPosition }) => {
+  return Math.floor(
+    1.25 * Number(flipQuarters) + 
+    Number(twistHalves) + 
+    Number(flipQuarters > 3 && (flightPosition === 2 || flightPosition === 4))
+  ) / 10
 }
 
 const getFinishDirection = ({ flipDirection, startPosition, flipQuarters, twistHalves }) => {
@@ -74,7 +79,8 @@ export default () => {
       flipDirection: 1,
       flipQuarters: 0,
       twistHalves: 0,
-      difficulty: 0
+      difficulty: 0,
+      flightPosition: 0
     }
   })
 
@@ -87,6 +93,7 @@ export default () => {
   const flipQuarters = useField('flipQuarters', form)
   const twistHalves = useField('twistHalves', form)
   const difficulty = useField('difficulty', form)
+  const flightPosition = useField('flightPosition', form)
 
   const finishDirection = getFinishDirection(values)
   const finishPositions = positions.filter(i => i.direction === finishDirection)
@@ -135,6 +142,10 @@ export default () => {
 
   const onTwistHalvesChange = (e) => {
     onChange('twistHalves', true)(e)
+  }
+
+  const onFlightPositionChange = (e) => {
+    onChange('flightPosition', true)(e)
   }
 
   return (
@@ -220,6 +231,19 @@ export default () => {
         <Input name='twistHalves' {...twistHalves.input} onChange={ onTwistHalvesChange }/>
         {twistHalves.meta.error && twistHalves.meta.touched && (
           <Typography>{twistHalves.meta.error}</Typography>
+        )}
+      </FormControl>
+      <FormControl className={ classes.shortControl }>
+        <InputLabel htmlFor='flightPosition'>Промежуточная позиция</InputLabel>
+        <Select {...flightPosition.input} onChange={onFlightPositionChange}>
+          {
+            flightPositions.map((pos, index) => (
+              <MenuItem value={pos.id} key={index}>{ pos.name }</MenuItem>
+            ))
+          }
+        </Select>
+        {flightPosition.meta.error && flightPosition.meta.touched && (
+          <Typography>{flightPosition.meta.error}</Typography>
         )}
       </FormControl>
       <Button
