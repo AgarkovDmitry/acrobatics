@@ -9,7 +9,9 @@ import { createBrowserHistory } from 'history'
 import reducer from './reducers'
 import saga from './sagas'
 
-const history = createBrowserHistory()
+const history = createBrowserHistory({
+  basename: process.env.PUBLIC_URL
+})
 
 const composeEnhancers =
   (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&

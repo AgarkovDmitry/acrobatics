@@ -2,13 +2,18 @@ import React from 'react'
 import { useForm, useField } from 'react-final-form-hooks'
 
 import Button from '@material-ui/core/Button'
-import FormControl from '@material-ui/core/FormControl'
-import Input from '@material-ui/core/Input'
-import InputLabel from '@material-ui/core/InputLabel'
-import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
-import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
+import Typography from '@material-ui/core/Typography'
+
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import AddCircleOutline from '@material-ui/icons/AddCircleOutline'
+
+import TextInput from './text-input'
+import Select from './select'
+import StageForm from './stage-form'
 
 import classes from './styles.module.css'
 
@@ -22,7 +27,7 @@ const positions = [
 ]
 
 const flightPositions = [
-  { id: 0, shortName: ' ', name: 'Произвольно' },
+  { id: 0, shortName: '', name: 'Прямо' },
   { id: 1, shortName: 'г', name: 'Группировка' },
   { id: 2, shortName: 'с', name: 'Складка' },
   { id: 3, shortName: 'св', name: 'Розножка' },
@@ -37,37 +42,49 @@ const directions = [
 
 const mod = (n, m) => ((n % m) + m) % m
 
-const generateCode = ({ flipDirection, startPosition, flipQuarters, twistHalves, finishPosition, flightPosition }) => '' + 
-  flipDirection + 
-  startPosition + 
-  (flipDirection === 1 ? 0 : flipQuarters) + 
-  (twistHalves !== 0 ? twistHalves : '') +
-  (finishPosition !== 1 && finishPosition !== 3 ? `-${finishPosition}` : '') + 
-  (flightPosition !== 0 && ` ${flightPositions.find(i => i.id === flightPosition).shortName}`)
+const getStagesChange = (stages) => {
+  const helixHalves = stages.filter(s => s.type === 'HELIX_ROTATION').reduce((res, item) => Number(item.value) + res, 0)
+  const flipQuarters = stages.filter(s => s.type === 'FLIP_ROTATION').reduce((res, item) => Number(item.value) + res, 0)
+  const flightPosition = (stages.find(s => s.type === 'CHANGE_POSITION') || { value: 0 }).value || 0
 
-const calculateDifficulty = ({ flipQuarters, twistHalves, flightPosition }) => {
+  return { helixHalves, flipQuarters, flightPosition }
+}
+
+const generateCode = ({ flipDirection, startPosition, finishPosition }, { helixHalves, flipQuarters, flightPosition }) => {
+  return '' + 
+    flipDirection + 
+    startPosition + 
+    (flipDirection === 1 ? 0 : flipQuarters) + 
+    (helixHalves !== 0 ? helixHalves : '') +
+    (finishPosition !== 1 && finishPosition !== 3 ? `-${finishPosition}` : '') + 
+    (flightPosition !== 0 ? ` ${flightPositions.find(i => i.id === flightPosition).shortName}` : '')
+}
+
+const calculateDifficulty = ({ helixHalves, flipQuarters, flightPosition }) => {
   return Math.floor(
     1.25 * Number(flipQuarters) + 
-    Number(twistHalves) + 
+    Number(helixHalves) + 
     Number(flipQuarters > 3 && (flightPosition === 2 || flightPosition === 4))
   ) / 10
 }
 
-const getFinishDirection = ({ flipDirection, startPosition, flipQuarters, twistHalves }) => {
+const getFinishDirection = ({ flipDirection, startPosition }, { helixHalves, flipQuarters }) => {
   const startDirection = positions[startPosition - 1].direction
   const convertedFlipDirection = (flipDirection % directions.length) - 1 // from [1, 2, 3] to [0, 1, -1]
   let finishDirection = mod(startDirection + convertedFlipDirection * flipQuarters, 4)
 
   if (finishDirection % 2 !== 0) {
-    finishDirection = mod((finishDirection + 2 * twistHalves), 4)  
+    finishDirection = mod((finishDirection + 2 * helixHalves), 4)  
   }
 
   return finishDirection
 }
 
 export default () => {
+  const [stages, setStages] = React.useState([])
+
   const onSubmit = values => {
-    console.log(values)
+    console.log(values, stages)
   }
 
   const { form, values, handleSubmit, valid } = useForm({
@@ -77,10 +94,7 @@ export default () => {
       startPosition: 1,
       finishPosition: 1,
       flipDirection: 1,
-      flipQuarters: 0,
-      twistHalves: 0,
       difficulty: 0,
-      flightPosition: 0
     }
   })
 
@@ -90,162 +104,108 @@ export default () => {
   const startPosition = useField('startPosition', form)
   const finishPosition = useField('finishPosition', form)
   const flipDirection = useField('flipDirection', form)
-  const flipQuarters = useField('flipQuarters', form)
-  const twistHalves = useField('twistHalves', form)
   const difficulty = useField('difficulty', form)
-  const flightPosition = useField('flightPosition', form)
 
-  const finishDirection = getFinishDirection(values)
+  const createStage = () => setStages((stages) => [...stages, { type: '', value: '' }])
+  
+  const removeStage = (id) => setStages((stages) => stages.filter((stage, index) => index !== id))
+
+  const updateStage = (id, newStage) => setStages((stages) => stages.map((item, index) => index !== id ? item : { ...item, ...newStage }))
+
+  const stagesChange = React.useMemo(
+    () => getStagesChange(stages),
+    [stages]
+  )
+
+  const finishDirection = React.useMemo(
+    () => getFinishDirection({
+      flipDirection: values.flipDirection,
+      startPosition: values.startPosition,
+    }, stagesChange),
+    [values.flipDirection, values.startPosition, stagesChange]
+  )
+
+  const newDifficulty = React.useMemo(
+    () => calculateDifficulty(stagesChange),
+    [stagesChange]
+  )
+
+  const newCode = React.useMemo(
+    () => generateCode({
+      flipDirection: values.flipDirection,
+      startPosition: values.startPosition,
+      finishPosition: values.finishPosition,
+    }, stagesChange),
+    [values.flipDirection, values.startPosition, values.finishPosition, stagesChange]
+  )
+
   const finishPositions = positions.filter(i => i.direction === finishDirection)
 
-  const onChange = (key, shouldFinishPositionBeRecalculated) => e => {
-    const updatedValues = { ...values, [key]: e.target.value }
-
-    let id = updatedValues.finishPosition
+  React.useEffect(() => {
+    const id = finishDirection !== 2 ? positions.find(p => p.direction === finishDirection).id : 0
   
-    if (shouldFinishPositionBeRecalculated) {
-      const direction = getFinishDirection(updatedValues)
-      /* We can't jump on hands, so there is no positions for direction, which equals 2 */
-      id = direction !== 2 ? positions.find(p => p.direction === direction).id : 0
-      form.change('finishPosition', id)
-    }
+    form.change('finishPosition', id)
+  }, [form, finishDirection])
 
-    if (shouldFinishPositionBeRecalculated) {
-      const difficulty = calculateDifficulty(updatedValues)
-      form.change('difficulty', difficulty)
-    }
-  
-    const newCode = generateCode({ ...updatedValues, finishPosition: id })
+  React.useEffect(() => {
+    form.change('difficulty', newDifficulty)
+  }, [form, newDifficulty])
+
+  React.useEffect(() => {
     form.change('code', newCode)
-    form.change(key, e.target.value)
-  }
-
-  const onStartPositionChange = (e) => {
-    onChange('startPosition', true)(e)
-  }
-
-  const onFinishPositionChange = (e) => {
-    onChange('finishPosition')(e)
-  }
-
-  const onFlipDirectionChange = (e) => {
-    onChange('flipDirection', true)(e)
-    
-    if(e.target.value === 1) {
-      form.change('flipQuarters', 0)
-    }
-  }
-
-  const onFlipQuatersChange = (e) => {
-    onChange('flipQuarters', true)(e)
-  }
-
-  const onTwistHalvesChange = (e) => {
-    onChange('twistHalves', true)(e)
-  }
-
-  const onFlightPositionChange = (e) => {
-    onChange('flightPosition', true)(e)
-  }
+  }, [form, newCode])
 
   return (
     <form className={ classes.form } onSubmit={handleSubmit}>
-      <FormControl className={ classes.longControl } required>
-        <InputLabel htmlFor='fullName'>Название</InputLabel>
-        <Input name='fullName' {...fullName.input} />
-        {fullName.meta.error && fullName.meta.touched && (
-          <Typography>{fullName.meta.error}</Typography>
-        )}
-      </FormControl>
-      <FormControl className={ classes.shortControl } required>
-        <InputLabel htmlFor='shortName'>Сокращенно</InputLabel>
-        <Input name='shortName' {...shortName.input} />
-        {shortName.meta.error && shortName.meta.touched && (
-          <Typography>{shortName.meta.error}</Typography>
-        )}
-      </FormControl>
+      <TextInput field={fullName} label='Название' className={ classes.longSection } required />
+      <TextInput field={shortName} label='Сокращенно' className={ classes.shortSection } required />
       <Divider className={ classes.divider }/>
-      <FormControl className={ classes.shortControl }>
-        <InputLabel htmlFor='startPosition'>Стартовая позиция</InputLabel>
-        <Select {...startPosition.input} onChange={onStartPositionChange}>
-          {
-            positions.map(({ name, id }) => (
-              <MenuItem value={id} key={id}>{ name }</MenuItem>
-            ))
-          }
-        </Select>
-        {startPosition.meta.error && startPosition.meta.touched && (
-          <Typography>{startPosition.meta.error}</Typography>
-        )}
-      </FormControl>
-      <FormControl className={ classes.shortControl }>
-        <InputLabel htmlFor='finishPosition'>Конечная позиция</InputLabel>
-        <Select {...finishPosition.input} disabled={ finishPositions.length === 1 } onChange={onFinishPositionChange}>
-          {
-            finishPositions
-            .map(({ name, id }) => (
-              <MenuItem value={id} key={id}>{ name }</MenuItem>
-            ))
-          }
-        </Select>
-        {finishPosition.meta.error && finishPosition.meta.touched && (
-          <Typography>{finishPosition.meta.error}</Typography>
-        )}
-      </FormControl>
-      <FormControl className={ classes.shortControl }>
-        <InputLabel htmlFor='code'>Код</InputLabel>
-        <Input {...code.input} disabled={ true } />
-        {code.meta.error && code.meta.touched && (
-          <Typography>{code.meta.error}</Typography>
-        )}
-      </FormControl>
-      <FormControl className={ classes.shortControl }>
-        <InputLabel htmlFor='flipDirection'>Сальтовое направление</InputLabel>
-        <Select {...flipDirection.input} onChange={onFlipDirectionChange}>
-          {
-            directions.map((name, index) => (
-              <MenuItem value={index + 1} key={index}>{ name }</MenuItem>
-            ))
-          }
-        </Select>
-        {flipDirection.meta.error && flipDirection.meta.touched && (
-          <Typography>{flipDirection.meta.error}</Typography>
-        )}
-      </FormControl>
-      <FormControl className={ classes.shortControl }>
-        <InputLabel htmlFor='flipQuarters'>Количество сальтовых четвертей</InputLabel>
-        <Input name='flipQuarters' {...flipQuarters.input} onChange={onFlipQuatersChange} disabled={values.flipDirection === 1}/>
-        {flipQuarters.meta.error && flipQuarters.meta.touched && (
-          <Typography>{flipQuarters.meta.error}</Typography>
-        )}
-      </FormControl>
-      <FormControl className={ classes.shortControl }>
-        <InputLabel htmlFor='difficulty'>Сложность</InputLabel>
-        <Input name='difficulty' {...difficulty.input} disabled/>
-        {difficulty.meta.error && difficulty.meta.touched && (
-          <Typography>{difficulty.meta.error}</Typography>
-        )}
-      </FormControl>
-      <FormControl className={ classes.shortControl }>
-        <InputLabel htmlFor='twistHalves'>Количество винтовых половин</InputLabel>
-        <Input name='twistHalves' {...twistHalves.input} onChange={ onTwistHalvesChange }/>
-        {twistHalves.meta.error && twistHalves.meta.touched && (
-          <Typography>{twistHalves.meta.error}</Typography>
-        )}
-      </FormControl>
-      <FormControl className={ classes.shortControl }>
-        <InputLabel htmlFor='flightPosition'>Промежуточная позиция</InputLabel>
-        <Select {...flightPosition.input} onChange={onFlightPositionChange}>
-          {
-            flightPositions.map((pos, index) => (
-              <MenuItem value={pos.id} key={index}>{ pos.name }</MenuItem>
-            ))
-          }
-        </Select>
-        {flightPosition.meta.error && flightPosition.meta.touched && (
-          <Typography>{flightPosition.meta.error}</Typography>
-        )}
-      </FormControl>
+      <div className={ classes.formBody }>
+        <div className={ classes.longSection }>
+          
+          <div className={ classes.stagesBlock }>
+            <Typography> Стадии </Typography>
+            <List className={classes.stagesList }>
+              {
+                stages.map((stage, index) => (
+                  <StageForm stage={ stage } id={index} key={index} removeStage={removeStage} updateStage={updateStage}/>
+                ))
+              }
+              <ListItem>
+                <ListItemIcon onClick={ createStage } className={ classes.clickableIcon }>
+                  <AddCircleOutline />
+                </ListItemIcon>
+              </ListItem>
+            </List>
+          </div>
+        </div>
+        <div className={ classes.shortSection }>
+          <TextInput field={code} label='Код' className={ classes.fullControl } disabled />
+          <TextInput field={difficulty} label='Сложность' className={ classes.fullControl } disabled />
+          <Select field={flipDirection} label='Сальтовое направление' className={ classes.medControl }>
+            {
+              directions.map((name, index) => (
+                <MenuItem value={index + 1} key={index}>{ name }</MenuItem>
+              ))
+            }
+          </Select>
+          <Select field={startPosition} label='Стартовая позиция' className={ classes.medControl }>
+            {
+              positions.map(({ name, id }) => (
+                <MenuItem value={id} key={id}>{ name }</MenuItem>
+              ))
+            }
+          </Select>
+          <Select field={finishPosition} label='Конечная позиция' className={ classes.fullControl } disabled={ finishPositions.length === 1 }>
+            {
+              finishPositions.map(({ name, id }) => (
+                <MenuItem value={id} key={id}>{ name }</MenuItem>
+              ))
+            }
+          </Select>
+        </div>
+      </div>
+
       <Button
         type='submit'
         fullWidth
@@ -254,7 +214,7 @@ export default () => {
         className={classes.submit}
         disabled={!valid}
       >
-        Sign in
+        Save
       </Button>
     </form>
   )

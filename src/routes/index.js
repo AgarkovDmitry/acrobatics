@@ -23,8 +23,8 @@ function App() {
       <div className={ classes.app }>
         <div className={ classes.appWrap }>
           <Switch>
-            <Route path='/' exact component={ Home } />
-            <Route path='/admin' exact component={ Admin } />
+            <Route path='/' exact component={ Admin } />
+            <Route path='/list' exact component={ Home } />
             <Route path='/login' exact component={ Login } />
           </Switch>
         </div>
