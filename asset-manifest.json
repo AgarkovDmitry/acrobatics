@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/acrobatics/static/css/main.2774a9de.chunk.css",
-    "main.js": "/acrobatics/static/js/main.91ac2611.chunk.js",
-    "main.js.map": "/acrobatics/static/js/main.91ac2611.chunk.js.map",
+    "main.js": "/acrobatics/static/js/main.be2aca2e.chunk.js",
+    "main.js.map": "/acrobatics/static/js/main.be2aca2e.chunk.js.map",
     "runtime~main.js": "/acrobatics/static/js/runtime~main.0cea684a.js",
     "runtime~main.js.map": "/acrobatics/static/js/runtime~main.0cea684a.js.map",
-    "static/js/2.fe3818e0.chunk.js": "/acrobatics/static/js/2.fe3818e0.chunk.js",
-    "static/js/2.fe3818e0.chunk.js.map": "/acrobatics/static/js/2.fe3818e0.chunk.js.map",
+    "static/js/2.2f84e9e3.chunk.js": "/acrobatics/static/js/2.2f84e9e3.chunk.js",
+    "static/js/2.2f84e9e3.chunk.js.map": "/acrobatics/static/js/2.2f84e9e3.chunk.js.map",
     "index.html": "/acrobatics/index.html",
-    "precache-manifest.1521f2d48d26f056acc03688cfa9b224.js": "/acrobatics/precache-manifest.1521f2d48d26f056acc03688cfa9b224.js",
+    "precache-manifest.cfb54f02e4a1f9b1b9cbf57b9e22a49d.js": "/acrobatics/precache-manifest.cfb54f02e4a1f9b1b9cbf57b9e22a49d.js",
     "service-worker.js": "/acrobatics/service-worker.js",
     "static/css/main.2774a9de.chunk.css.map": "/acrobatics/static/css/main.2774a9de.chunk.css.map",
     "static/media/styles.module.css": "/acrobatics/static/media/background.bab218c5.jpg"
